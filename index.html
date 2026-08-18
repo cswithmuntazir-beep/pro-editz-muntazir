@@ -579,42 +579,102 @@
       <a href="#pricing">Pricing</a>
     </div>
   </footer>
-
 <script>
-  // build tick marks
-  const ticks = document.getElementById('ticks');
-  for(let i=0;i<40;i++){ const s=document.createElement('span'); ticks.appendChild(s); }
-
-  const sections = [
-    {id:'hero', label:'CLIP 01 — HERO'},
-    {id:'services', label:'CLIP 02 — SERVICES'},
-    {id:'pricing', label:'CLIP 03 — PRICING'},
-    {id:'process', label:'CLIP 04 — PROCESS'},
-    {id:'contact', label:'CLIP 05 — CONTACT'}
-  ];
-  const fill = document.getElementById('scrubFill');
-  const head = document.getElementById('scrubHead');
-  const label = document.getElementById('scrubLabel');
-
-  function onScroll(){
-    const doc = document.documentElement;
-    const scrollTop = doc.scrollTop || document.body.scrollTop;
-    const scrollH = doc.scrollHeight - doc.clientHeight;
-    const pct = scrollH > 0 ? (scrollTop/scrollH)*100 : 0;
-    fill.style.width = pct + '%';
-    head.style.left = pct + '%';
-
-    let current = sections[0];
-    for(const s of sections){
-      const el = document.getElementById(s.id);
-      if(el && el.getBoundingClientRect().top < window.innerHeight*0.5) current = s;
+    // build tick marks
+    const ticks = document.getElementById('ticks');
+    for(let i=0;i<40;i++){
+      const s=document.createElement('span');
+      ticks.appendChild(s);
     }
-    const parts = current.label.split('—');
-    label.innerHTML = parts[0] + '<b>—' + parts[1] + '</b>';
-  }
-  document.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-</script>
+    const sections = [
+      {id:'hero', label:'CLIP 01 — HERO'},
+      {id:'services', label:'CLIP 02 — SERVICES'},
+      {id:'pricing', label:'CLIP 03 — PRICING'},
+      {id:'process', label:'CLIP 04 — PROCESS'},
+      {id:'contact', label:'CLIP 05 — CONTACT'}
+    ];
+    const fill = document.getElementById('scrubFill');
+    const head = document.getElementById('scrubHead');
+    const label = document.getElementById('scrubLabel');
+    function onScroll(){
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollH = doc.scrollHeight - doc.clientHeight;
+      const pct = scrollH > 0 ? (scrollTop/scrollH)*100 : 0;
+      fill.style.width = pct + '%';
+      head.style.left = pct + '%';
+      let current = sections[0];
+      for(const s of sections){
+        const el = document.getElementById(s.id);
+        if(el && el.getBoundingClientRect().top < window.innerHeight*0.5) current = s;
+      }
+      const parts = current.label.split('—');
+      label.innerHTML = parts[0] + '<b>—' + parts[1] + '</b>';
+    }
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
 
+    // ==========================================
+    // DYNAMIC GLOBAL FEEDBACK COUNT (CountAPI)
+    // ==========================================
+    const fbForm = document.getElementById('fbForm');
+    const fbCountEl = document.querySelector('.feedback-count');
+
+    // Unique API key key for your website feedback counter
+    const counterNamespace = 'pro-editz-muntazir-feedback-key';
+
+    // 1. Fetch current global count on page load
+    async function loadFeedbackCount() {
+      try {
+        const res = await fetch(`https://api.countapi.xyz/get/${counterNamespace}/count`);
+        const data = await res.json();
+        if (data && data.value !== undefined) {
+          fbCountEl.textContent = data.value;
+        }
+      } catch (err) {
+        // If namespace doesn't exist yet, create it starting at current HTML count (24)
+        try {
+          const initRes = await fetch(`https://api.countapi.xyz/create?namespace=${counterNamespace}&key=count&value=24`);
+          const initData = await initRes.json();
+          if (initData && initData.value !== undefined) {
+            fbCountEl.textContent = initData.value;
+          }
+        } catch(e) {
+          console.error("CountAPI error:", e);
+        }
+      }
+    }
+    loadFeedbackCount();
+
+    // 2. Submit Form and Increment Count Globally
+    fbForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(fbForm);
+      try {
+        const response = await fetch(fbForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        if (response.ok) {
+          // Increment the counter globally in the database
+          const incRes = await fetch(`https://api.countapi.xyz/hit/${counterNamespace}/count`);
+          const incData = await incRes.json();
+          if (incData && incData.value) {
+            fbCountEl.textContent = incData.value;
+          }
+          
+          alert('Thank you for your feedback!');
+          fbForm.reset();
+        } else {
+          alert('Oops! There was a problem submitting your feedback.');
+        }
+      } catch (error) {
+        alert('Oops! There was a network error submitting your form.');
+      }
+    });
+  </script>
 </body>
 </html>
+
