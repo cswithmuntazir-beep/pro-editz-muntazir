@@ -287,6 +287,46 @@
   .trust-item b{display:block;font-family:var(--display);font-size:15px;margin-bottom:4px;}
   .trust-item span{font-size:12px;color:var(--mute);}
 
+  /* ---------- FEEDBACK / RATING ---------- */
+  .feedback{padding:0 40px 100px;max-width:800px;margin:0 auto;}
+  .fb-box{
+    border:1px solid var(--line);background:var(--panel);
+    padding:40px;
+  }
+  @media(max-width:640px){.fb-box{padding:26px 20px;}}
+  .fb-stars{
+    display:flex;gap:8px;margin-bottom:28px;
+  }
+  .star-input{display:none;}
+  .star-label{
+    font-size:30px;cursor:pointer;color:var(--line);transition:color .15s ease;
+    line-height:1;
+  }
+  .fb-stars:hover .star-label{color:var(--line);}
+  .star-label:hover, .star-label:hover ~ .star-label{color:var(--amber);}
+  .fb-stars{flex-direction:row-reverse;justify-content:flex-end;}
+  .star-input:checked ~ .star-label{color:var(--amber);}
+  .fb-field{margin-bottom:20px;}
+  .fb-field label{
+    display:block;font-family:var(--mono);font-size:11px;color:var(--mute);
+    text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;
+  }
+  .fb-field input, .fb-field textarea{
+    width:100%;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--ink);padding:13px 14px;font-family:var(--body);font-size:14px;
+    border-radius:2px;resize:vertical;
+  }
+  .fb-field input:focus, .fb-field textarea:focus{outline:none;border-color:var(--red);}
+  .fb-field textarea{min-height:110px;}
+  .fb-submit{
+    background:var(--red);color:#fff;padding:14px 30px;border:none;
+    font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;
+    border-radius:2px;cursor:pointer;transition:background .15s ease;
+    font-family:var(--body);
+  }
+  .fb-submit:hover{background:#ff4552;}
+  .fb-note{font-family:var(--mono);font-size:11px;color:var(--mute-2);margin-top:16px;}
+
   /* ---------- CTA ---------- */
   .cta{
     padding:120px 40px;text-align:center;position:relative;
@@ -324,6 +364,7 @@
       <a href="#services">Services</a>
       <a href="#pricing">Pricing</a>
       <a href="#process">Process</a>
+      <a href="#feedback">Feedback</a>
       <a href="#contact">Contact</a>
     </div>
     <a class="nav-cta" href="https://instagram.com/pro.editz.muntazir0" target="_blank" rel="noopener">DM Now</a>
@@ -484,6 +525,41 @@
     <div class="trust-item"><b>24/7 Support</b><span>During your project</span></div>
     <div class="trust-item"><b>100% Satisfaction</b><span>Revisions included</span></div>
   </div>
+
+  <section id="feedback">
+    <div class="sec-head">
+      <div class="sec-tag">// rate my work</div>
+      <h2 class="sec-title">Leave a rating & feedback.</h2>
+      <p class="sec-desc">Worked with me before? Rate the project and drop a quick note — it goes straight to my inbox.</p>
+    </div>
+    <div class="feedback">
+      <div class="fb-box">
+        <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="fbForm">
+          <div class="fb-stars">
+            <input class="star-input" type="radio" id="star5" name="rating" value="5"><label class="star-label" for="star5">★</label>
+            <input class="star-input" type="radio" id="star4" name="rating" value="4"><label class="star-label" for="star4">★</label>
+            <input class="star-input" type="radio" id="star3" name="rating" value="3"><label class="star-label" for="star3">★</label>
+            <input class="star-input" type="radio" id="star2" name="rating" value="2"><label class="star-label" for="star2">★</label>
+            <input class="star-input" type="radio" id="star1" name="rating" value="1"><label class="star-label" for="star1">★</label>
+          </div>
+          <div class="fb-field">
+            <label for="fbName">Your Name</label>
+            <input type="text" id="fbName" name="name" placeholder="e.g. Aariz Khan" required>
+          </div>
+          <div class="fb-field">
+            <label for="fbContact">Instagram / Email (optional)</label>
+            <input type="text" id="fbContact" name="contact" placeholder="@yourhandle or email">
+          </div>
+          <div class="fb-field">
+            <label for="fbMsg">Feedback</label>
+            <textarea id="fbMsg" name="message" placeholder="How was the edit, thumbnail, or growth work?" required></textarea>
+          </div>
+          <button class="fb-submit" type="submit">Submit Feedback →</button>
+          <div class="fb-note">Sent privately — never shown publicly on this site.</div>
+        </form>
+      </div>
+    </div>
+  </section>
 
   <section class="cta" id="contact">
     <h2>Editing is my passion.<br><span>Your growth is my mission.</span></h2>
