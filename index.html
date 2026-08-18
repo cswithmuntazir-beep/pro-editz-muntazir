@@ -639,13 +639,14 @@ async function loadFeedbackCount() {
 }
 loadFeedbackCount();
 
-// 2. Submit Form and Increment Count
+  // 2. Submit Form and Increment Count
 fbForm.addEventListener('submit', async function (e) {
-  // Option A: If using Formspree / Web3Forms, send form data first
+  e.preventDefault(); // Prevents default form submission/page refresh
+
   const formData = new FormData(fbForm);
-  
+
   try {
-    // Submit form data to your backend service (e.g., Formspree/FormSubmit)
+    // If your form uses an external service (Formspree/Web3Forms/FormSubmit)
     const formResponse = await fetch(fbForm.action, {
       method: 'POST',
       body: formData,
@@ -654,22 +655,22 @@ fbForm.addEventListener('submit', async function (e) {
 
     if (formResponse.ok) {
       // Increment counter upon successful submission
-      const countRes = await fetch(`https://api.counterapi.dev/v1/${counterWorkspace}/${counterKey}/up`);
+      const countRes = await fetch('https://api.counterapi.dev/v1/pro-editz-muntazir/feedback-count/up');
       const countData = await countRes.json();
+      
       if (countData && countData.count !== undefined) {
         fbCountEl.textContent = countData.count;
       }
       fbForm.reset();
       alert('Feedback submitted successfully!');
     } else {
-      alert('Form submission failed. Please try again.');
+      alert('Form submission failed. Please check your form action URL.');
     }
   } catch (err) {
     console.error('Error submitting form:', err);
     alert('An error occurred while submitting.');
   }
 });
-  
   </script>
 </body>
 </html>
