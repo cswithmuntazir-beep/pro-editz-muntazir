@@ -619,34 +619,41 @@
 const fbForm = document.getElementById('fbForm');
 const fbCountEl = document.querySelector('.feedback-count');
 
-// Replace 'your-unique-site-id' with any unique slug (e.g., 'pro-editz-muntazir')
 const counterWorkspace = 'pro-editz-muntazir';
 const counterKey = 'feedback-count';
 
-// 1. Fetch current global count on page load
+// 1. Fetch current global count on page load (Auto-creates if 404)
 async function loadFeedbackCount() {
   try {
-    const res = await fetch(`https://api.counterapi.dev/v1/${counterWorkspace}/${counterKey}`);
-    if (!res.ok) throw new Error('Counter not found');
+    let res = await fetch(`https://api.counterapi.dev/v1/${counterWorkspace}/${counterKey}`);
+    
+    // If counter doesn't exist yet (404), create it automatically!
+    if (res.status === 404) {
+      res = await fetch(`https://api.counterapi.dev/v1/${counterWorkspace}/${counterKey}/create?initial_value=24`, {
+        method: 'POST'
+      });
+    }
+
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+
     const data = await res.json();
-    if (data && data.count !== undefined) {
+    if (data && typeof data.count === 'number') {
       fbCountEl.textContent = data.count;
     }
   } catch (err) {
-    // Fallback static count if API request fails
+    console.error('Failed to load/initialize counter:', err);
     fbCountEl.textContent = '24';
   }
 }
+
 loadFeedbackCount();
 
-  // 2. Submit Form and Increment Count
+// 2. Submit Form and Increment Count
 fbForm.addEventListener('submit', async function (e) {
-  e.preventDefault(); // Prevents default form submission/page refresh
-
+  e.preventDefault();
   const formData = new FormData(fbForm);
 
   try {
-    // If your form uses an external service (Formspree/Web3Forms/FormSubmit)
     const formResponse = await fetch(fbForm.action, {
       method: 'POST',
       body: formData,
@@ -655,12 +662,23 @@ fbForm.addEventListener('submit', async function (e) {
 
     if (formResponse.ok) {
       // Increment counter upon successful submission
-      const countRes = await fetch('https://api.counterapi.dev/v1/pro-editz-muntazir/feedback-count/up');
-      const countData = await countRes.json();
-      
-      if (countData && countData.count !== undefined) {
-        fbCountEl.textContent = countData.count;
+      try {
+        const countRes = await fetch(`https://api.counterapi.dev/v1/${counterWorkspace}/${counterKey}/up`);
+        const countData = await countRes.json();
+
+        if (countData && typeof countData.count === 'number') {
+          fbCountEl.textContent = countData.count;
+        } else {
+          // Local fallback increment
+          const currentVal = parseInt(fbCountEl.textContent, 10) || 24;
+          fbCountEl.textContent = currentVal + 1;
+        }
+      } catch (countErr) {
+        console.error('Counter increment error:', countErr);
+        const currentVal = parseInt(fbCountEl.textContent, 10) || 24;
+        fbCountEl.textContent = currentVal + 1;
       }
+
       fbForm.reset();
       alert('Feedback submitted successfully!');
     } else {
