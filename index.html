@@ -546,7 +546,7 @@
     <input class="star-input" type="radio" id="star1" name="rating" value="1"><label class="star-label" for="star1">★</label>
   </div>
   <div class="fb-field">
-    <label for="fbName"> feed back here  </label>
+    <label for="fbName"> name  </label>
     <input type="text" id="fbName" name="name" placeholder="e.g. muntazir " required>
   </div>
   <div class="fb-field">
@@ -642,7 +642,7 @@ async function loadFeedbackCount() {
     }
   } catch (err) {
     console.error('Failed to load/initialize counter:', err);
-    fbCountEl.textContent = '24';
+    fbCountEl.textContent = '50';
   }
 }
 
